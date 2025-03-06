@@ -1,0 +1,30 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environments
+.venv/
+
+
+# Ignore IDE/editor settings
+.vscode/
+
+# Ignore environment variables
+.env
+config.py
+
+# Ignore instances
+instance/
+
+# Ignore test files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Ignore Builds
+dist/
+build/
+*.egg-info/
+
+# Ignore project setup
