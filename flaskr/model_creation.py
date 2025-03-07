@@ -71,6 +71,6 @@ class TaskPriorityTypes(Base):
 
 
 
-engine = create_engine(os.getenv("DATABASE_URL"), echo = True)
+engine = create_engine(os.getenv("DATABASE_URI"), echo = True)
 
 Base.metadata.create_all(engine)

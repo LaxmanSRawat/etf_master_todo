@@ -18,7 +18,7 @@ from sqlalchemy import String, ForeignKey
 from sqlalchemy.sql import func
 from uuid import UUID
 import datetime
-from database import Base
+from flaskr.database import Base
 
 class MasterToDoList(Base):
     __tablename__ = "master_to_do_list"
