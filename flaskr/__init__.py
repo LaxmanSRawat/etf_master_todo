@@ -34,4 +34,10 @@ def create_app(test_config=None):
     def hello():
         return 'Hello World!'
     
+    #importing blueprint
+    from . import tasks,task_status_types,task_priority_types
+    app.register_blueprint(tasks.bp)
+    app.register_blueprint(task_status_types.bp)
+    app.register_blueprint(task_priority_types.bp)
+    
     return app

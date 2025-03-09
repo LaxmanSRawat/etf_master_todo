@@ -1,6 +1,5 @@
 1. python -m venv .venv
 2. .venv\Scripts\activate
 3. pip install -r requirements.txt
-4. cd app
-5. python -m flask
-6. flask --app app run OR flask run
+4. cd code
+5. flask --app flaskr run --debug

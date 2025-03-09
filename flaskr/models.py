@@ -16,7 +16,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.sql import func
-from uuid import UUID
+from uuid import UUID, uuid4
 import datetime
 from flaskr.database import Base
 
@@ -38,7 +38,10 @@ class MasterToDoList(Base):
     priority = relationship("TaskPriorityTypes")
 
     #To Do - Assign current timestamp in modified at column
-    def __init__(self, task_title=None,task_description=None,modified_on=None,priority_id=None,planned_start_date=None,planned_end_date=None,status_id=None,completed_on=None):
+    def __init__(self,id=None, task_title=None,task_description=None,modified_on=None,priority_id=None,planned_start_date=None,planned_end_date=None,status_id=None,completed_on=None):
+        if not id:
+            id = uuid4()
+        self.id = id
         self.task_title = task_title
         self.task_description = task_description
         self.modified_on = modified_on
@@ -97,12 +100,14 @@ class TaskStatusTypes(Base):
     status: Mapped[str] = mapped_column(String(50))
     status_description: Mapped[str] = mapped_column(String(255))
 
-    def __init__(self,status=None,status_description=None):
+    def __init__(self,id=None,status=None,status_description=None):
+        if not id:
+            self.id = id
         self.status = status
         self.status_description = status_description
     
     def __repr__(self):
-        return f'<Status ID: {self.status_id!r}, Status: {self.status!r}>'
+        return f'<Status ID: {self.id!r}, Status: {self.status!r}>'
 
 class TaskPriorityTypes(Base):
     __tablename__ = "task_priority_types"
@@ -110,10 +115,12 @@ class TaskPriorityTypes(Base):
     priority: Mapped[str] = mapped_column(String(50))
     priority_description: Mapped[str] = mapped_column(String(255))
 
-    def __init__(self,priority=None,priority_description=None):
+    def __init__(self,id=None,priority=None,priority_description=None):
+        if not id:
+            self.id = id
         self.priority = priority
         self.priority_description = priority_description
     
     def __repr__(self):
-        return f'<Priority ID: {self.priority_id!r}, Priority: {self.priority!r}>'
+        return f'<Priority ID: {self.id!r}, Priority: {self.priority!r}>'
 
