@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from flaskr.database import db_session, init_db
+from flaskr.database import init_db, db_session
 
 def create_app(test_config=None):
     #create and configure the app
@@ -23,11 +23,11 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    init_db(app)
+
     @app.teardown_appcontext
     def shutdown_session(exception=None):
         db_session.remove()
-
-    init_db()
 
     # a simple page that says Hello
     @app.route('/hello')
