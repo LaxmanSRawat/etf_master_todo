@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from flaskr.database import init_db, db_session
+from flaskr.database import init_db, db_session,engine
 
 def create_app(test_config=None):
     #create and configure the app
@@ -23,7 +23,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    init_db(app)
+    init_db(app,engine)
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):

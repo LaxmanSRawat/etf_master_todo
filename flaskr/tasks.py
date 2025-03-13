@@ -7,7 +7,7 @@ from uuid import uuid4
 
 bp = Blueprint('tasks',__name__, url_prefix='/tasks')
 
-@bp.route('/', methods = ["GET","POST"])
+@bp.route('', methods = ["GET","POST"])
 def get_tasks():
     # result = MasterToDoList.query.all()
     if request.method == 'GET':

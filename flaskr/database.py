@@ -13,10 +13,10 @@ db_session = scoped_session(session_maker)
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-def init_db(app):
-    global engine
+def init_db(app,engine):
     engine = create_engine(app.config['DATABASE_URI'], echo= True)
     session_maker.configure(bind=engine)
 
     from . import models
     Base.metadata.create_all(bind=engine)
+    return engine
