@@ -57,7 +57,6 @@ def get_task(task_id):
             task = session.execute(stmt).scalar_one()
             if not task:
                 return jsonify({"error": "task not found"}), 404
-            print("debug1", task.task_title, task.task_description)
             if "task_title" in data:
                 task.task_title = data["task_title"]
             if "task_description" in data:

@@ -6,7 +6,7 @@ from sqlalchemy import select
 #todo only accessible by admin
 bp = Blueprint('task_status_types',__name__,url_prefix='/task_status_types')
 
-@bp.route('/', methods = ["GET","POST"])
+@bp.route('', methods = ["GET","POST"])
 def get_tasks():
     if request.method == 'GET':
         stmt = select(TaskStatusTypes)
@@ -27,35 +27,37 @@ def get_tasks():
     )
     db_session.add(new_status)
     db_session.commit()
-    return jsonify({"message":"Status created successfully", "task_id": str(new_status.id)}), 200
+    return jsonify({"message":"Status created successfully", "status_id": str(new_status.id)}), 200
 
 @bp.route('/<int:status_id>', methods = ["GET","PUT"])
 def get_task(status_id):
 
     #find status type
     stmt = select(TaskStatusTypes).where(TaskStatusTypes.id == status_id)
-    with db_session() as session:
-        status_type = session.execute(stmt)
-        if not status_type:
-            return jsonify({"error": "Status type not found"}), 404
-        result = [{"id": t.id, "status": t.status, "description": t.status_description} for t in status_type]
-    
-    
+
     if request.method == 'PUT':
         #update the task details
         data = request.get_json()
 
-        if "status" in data:
-            status_type.status = data["status"]
-        if "status_description" in data:
-            status_type.status_description = data["status_description"]
-
-        db_session.commit()
+        with db_session() as session:
+            status_type = session.execute(stmt).scalar_one()
+            if not status_type:
+                return jsonify({"error": "Status type not found"}), 404
+            if "status" in data:
+                status_type.status = data["status"]
+            if "status_description" in data:
+                status_type.status_description = data["status_description"]
+            db_session.add(status_type)
+            db_session.commit()
 
         return jsonify({"message" : "Status type updated successfully"}), 200
     
     #else return task details
-    
+    with db_session() as session:
+        status_type = session.execute(stmt).scalars().all()
+        if not status_type:
+            return jsonify({"error": "Status type not found"}), 404
+        result = [{"id": t.id, "status": t.status, "status_description": t.status_description} for t in status_type]
     return jsonify(result),200
 
 
@@ -92,11 +94,7 @@ def init_status_types():
         status_description = "This status means that the task and corresponding child tasks have been deleted i.e. hidden for user",
     )
     
-    db_session.add(not_started_status)
-    db_session.add(in_progress_status)
-    db_session.add(completed_status)
-    db_session.add(cancelled_status)
-    db_session.add(deleted_status)
+    db_session.add_all([not_started_status,in_progress_status,completed_status,cancelled_status,deleted_status])
     db_session.commit()
 
     return jsonify({"message":"Task Status Types are intialized successfully"}), 200

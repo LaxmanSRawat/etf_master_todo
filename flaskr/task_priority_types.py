@@ -6,7 +6,7 @@ from sqlalchemy import select
 #todo only accessible by admin
 bp = Blueprint('task_priority_types',__name__,url_prefix='/task_priority_types')
 
-@bp.route('/', methods = ["GET","POST"])
+@bp.route('', methods = ["GET","POST"])
 def get_tasks():
     if request.method == 'GET':
         stmt = select(TaskPriorityTypes)
@@ -27,34 +27,38 @@ def get_tasks():
     )
     db_session.add(new_priority)
     db_session.commit()
-    return jsonify({"message":"Priority created successfully", "task_id": str(new_priority.id)}), 200
+    return jsonify({"message":"Priority created successfully", "priority_id": str(new_priority.id)}), 200
 
 @bp.route('/<int:priority_id>', methods = ["GET","PUT"])
 def get_task(priority_id):
 
     #find priority type
     stmt = select(TaskPriorityTypes).where(TaskPriorityTypes.id == priority_id)
-    with db_session() as session:
-        priority_type = session.execute(stmt)
-        if not priority_type:
-            return jsonify({"error": "Priority type not found"}), 404
-        result = [{"id": p.id, "priority": p.priority, "description": p.priority_description} for p in priority_type]
     
     
     if request.method == 'PUT':
         #update the task details
         data = request.get_json()
 
-        if "priority" in data:
-            priority_type.priority = data["priority"]
-        if "priority_description" in data:
-            priority_type.priority_description = data["priority_description"]
-
-        db_session.commit()
+        with db_session() as session:
+            priority_type = session.execute(stmt).scalar_one()
+            if not priority_type:
+                return jsonify({"error": "Priority type not found"}), 404
+            if "priority" in data:
+                priority_type.priority = data["priority"]
+            if "priority_description" in data:
+                priority_type.priority_description = data["priority_description"]
+            db_session.add(priority_type)
+            db_session.commit()
 
         return jsonify({"message" : "Priority type updated successfully"}), 200
     
     #else return task details
+    with db_session() as session:
+        priority_type = session.execute(stmt).scalars().all()
+        if not priority_type:
+            return jsonify({"error": "Priority type not found"}), 404
+        result = [{"id": p.id, "priority": p.priority, "priority_description": p.priority_description} for p in priority_type]
     return jsonify(result),200
 
 @bp.route('/initialize', methods = ["POST"])
@@ -90,11 +94,8 @@ def init_priority_types():
         priority_description = " Tasks with minimal impact that can be eliminated if necessary.",
     )
     
-    db_session.add(critical_priority)
-    db_session.add(high_priority)
-    db_session.add(medium_priority)
-    db_session.add(low_priority)
-    db_session.add(lowest_priority)
+    db_session.add_all([critical_priority,high_priority,medium_priority,low_priority,lowest_priority])
+
     db_session.commit()
 
     return jsonify({"message":"Task Priority Types are intialized successfully"}), 200
