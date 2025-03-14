@@ -1,8 +1,7 @@
 import pytest
 from flaskr import create_app
 from flaskr.database import Base, db_session, engine, init_db
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
+from sqlalchemy import text
 import flaskr.models
 from flaskr.database import Base
 
@@ -18,16 +17,12 @@ def app():
 
 @pytest.fixture(scope="module")
 def session(app):
-    # engine = create_engine(app.config["DATABASE_URI"])
-    # db_session = scoped_session(sessionmaker(bind=engine))
-    # session = db_session()
-    # Base.query = db_session.query_property()
-    # Base.metadata.create_all(bind=engine)
     
     db_engine = init_db(app,engine)
     Base.metadata.create_all(bind=db_engine)
 
     session = db_session()
+    session.execute(text("PRAGMA foreign_keys = 1;"))
     yield session
 
     session.rollback()

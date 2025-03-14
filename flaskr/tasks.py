@@ -48,46 +48,47 @@ def get_tasks():
 
 @bp.route('/<uuid:task_id>', methods = ["GET","PUT"])
 def get_task(task_id):
-
-    #find task
-    stmt = select(MasterToDoList,TaskStatusTypes,TaskPriorityTypes).join_from(MasterToDoList,TaskStatusTypes).join_from(MasterToDoList,TaskPriorityTypes).where(MasterToDoList.id == task_id)
-    with db_session() as session:
-        task = session.execute(stmt)
-        if not task:
-            return jsonify({"error": "task not found"}), 404
-        result = [{"id": t.id, "task_title" : t.taks_title, "task_description" : t.task_description, "status_id" : t.status_id, "priority_id" : t.priority_id, "planned_start_date" : t.planned_start_date, "planned_end_date" : t.planned_end_date, "completed_on" : t.completed_on, "created_on" : t.created_on, "modified_on": t.modified_on } for t in task]
-
-    
+    stmt = select(MasterToDoList).where(MasterToDoList.id == task_id)
     if request.method == 'PUT':
         #update the task details
         data = request.get_json()
-
-        if "task_title" in data:
-            task.task_title = data["task_title"]
-        if "task_description" in data:
-            task.task_description = data["task_description"]
-        if "status_id" in data:
-            #todo whitelist allowed status types
-            task.status_id = data["status_id"]
-        if "priority_id" in data:
-            #todo whitelist allowed priority types
-            task.priority_id = data["priority_id"]
-        if "planned_start_date" in data:
-            task.planned_start_date = data["planned_start_date"]
-        if "planned_end_date" in data:
-            task.planned_end_date = data["planned_end_date"]
-        if "completed_on" in data:
-            task.completed_on = data["completed_on"]
-        
-        #todo standardize the datetime used everywhere
-        task.modified_on = datetime.utcnow()
-
-        db_session.commit()
-        
-
+        with db_session() as session:
+            #find task
+            task = session.execute(stmt).scalar_one()
+            if not task:
+                return jsonify({"error": "task not found"}), 404
+            print("debug1", task.task_title, task.task_description)
+            if "task_title" in data:
+                task.task_title = data["task_title"]
+            if "task_description" in data:
+                task.task_description = data["task_description"]
+            if "status_id" in data:
+                #todo whitelist allowed status types
+                task.status_id = data["status_id"]
+            if "priority_id" in data:
+                #todo whitelist allowed priority types
+                task.priority_id = data["priority_id"]
+            if "planned_start_date" in data:
+                task.planned_start_date = data["planned_start_date"]
+            if "planned_end_date" in data:
+                task.planned_end_date = data["planned_end_date"]
+            if "completed_on" in data:
+                task.completed_on = data["completed_on"]
+            
+            #todo standardize the datetime used everywhere
+            task.modified_on = datetime.datetime.now(datetime.timezone.utc)
+            db_session.add(task)
+            db_session.commit()  
         return jsonify({"message" : "Task updated successfully"}), 200
     
     #else return task details
+    #find task
+    with db_session() as session:
+        task = session.execute(stmt).scalars().all()
+        if not task:
+            return jsonify({"error": "task not found"}), 404
+        result = [{"id": t.id, "task_title" : t.task_title, "task_description" : t.task_description, "status_id" : t.status_id, "priority_id" : t.priority_id, "planned_start_date" : t.planned_start_date, "planned_end_date" : t.planned_end_date, "completed_on" : t.completed_on, "created_on" : t.created_on, "modified_on": t.modified_on } for t in task]
+
     return jsonify(result),200
     
     
