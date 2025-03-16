@@ -3,7 +3,7 @@ from flaskr.database import db_session
 from flaskr.models import TaskStatusTypes
 from sqlalchemy import select
 
-#todo only accessible by admin
+#[ ] only accessible by admin
 bp = Blueprint('task_status_types',__name__,url_prefix='/task_status_types')
 
 @bp.route('', methods = ["GET","POST"])
@@ -64,8 +64,8 @@ def get_task(status_id):
 @bp.route('/initialize', methods = ["POST"])
 def init_status_types():
 
-    #todo truncate the table before hand
-    #todo move to DB Migrate initialization
+    #[ ] truncate the table before hand
+    #[ ] move to DB Migrate initialization
 
     not_started_status = TaskStatusTypes(
         id = 1,

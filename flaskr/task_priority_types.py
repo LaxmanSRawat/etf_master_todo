@@ -3,7 +3,7 @@ from flaskr.database import db_session
 from flaskr.models import TaskPriorityTypes
 from sqlalchemy import select
 
-#todo only accessible by admin
+#[ ] only accessible by admin
 bp = Blueprint('task_priority_types',__name__,url_prefix='/task_priority_types')
 
 @bp.route('', methods = ["GET","POST"])
@@ -64,8 +64,8 @@ def get_task(priority_id):
 @bp.route('/initialize', methods = ["POST"])
 def init_priority_types():
 
-    #todo truncate the table before hand
-    #todo move to DB Migrate initialization
+    #[ ] truncate the table before hand
+    #[ ] move to DB Migrate initialization
 
     critical_priority = TaskPriorityTypes(
         id = 1,

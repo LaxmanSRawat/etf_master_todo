@@ -31,7 +31,7 @@ def get_tasks():
             return jsonify({"error": "not started status not initiated"}), 500
         not_started_status_id = not_started_status.id
 
-    #todo whitelist allowed priority types
+    #[ ] whitelist allowed priority types
     
     new_task = MasterToDoList(
         task_title = data["task_title"],
@@ -62,10 +62,10 @@ def get_task(task_id):
             if "task_description" in data:
                 task.task_description = data["task_description"]
             if "status_id" in data:
-                #todo whitelist allowed status types
+                #[ ] whitelist allowed status types
                 task.status_id = data["status_id"]
             if "priority_id" in data:
-                #todo whitelist allowed priority types
+                #[ ] whitelist allowed priority types
                 task.priority_id = data["priority_id"]
             if "planned_start_date" in data:
                 task.planned_start_date = data["planned_start_date"]
@@ -74,7 +74,7 @@ def get_task(task_id):
             if "completed_on" in data:
                 task.completed_on = data["completed_on"]
             
-            #todo standardize the datetime used everywhere
+            #[ ] standardize the datetime used everywhere
             task.modified_on = datetime.datetime.now(datetime.timezone.utc)
             db_session.add(task)
             db_session.commit()  

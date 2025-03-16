@@ -3,3 +3,8 @@
 3. pip install -r requirements.txt
 4. cd code
 5. flask --app flaskr run --debug
+
+-- Testing
+1. pytest OR python -m pytest
+2. coverage run -m pytest
+3. coverage report
