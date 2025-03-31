@@ -14,7 +14,7 @@ def get_tasks():
         stmt = select(MasterToDoList,TaskStatusTypes,TaskPriorityTypes).join_from(MasterToDoList,TaskStatusTypes).join_from(MasterToDoList,TaskPriorityTypes)
         with db_session() as session:
             tasks = session.execute(stmt).scalars().all()
-            result = [{"id": t.id, "task_title" : t.task_title, "task_description" : t.task_description, "status_id" : t.status_id, "priority_id" : t.priority_id, "planned_start_date" : t.planned_start_date, "planned_end_date" : t.planned_end_date, "completed_on" : t.completed_on, "created_on" : t.created_on, "modified_on": t.modified_on } for t in tasks]
+            result = [{"id": t.id, "task_title" : t.task_title, "task_description" : t.task_description, "status_id" : t.status_id, "priority_id" : t.priority_id, "planned_start_date" : t.planned_start_date, "planned_end_date" : t.planned_end_date, "is_completed":  True if t.completed_on else False , "completed_on" : t.completed_on, "created_on" : t.created_on, "modified_on": t.modified_on } for t in tasks]
         return jsonify(result),200
     
     #else create new request
@@ -86,7 +86,7 @@ def get_task(task_id):
         task = session.execute(stmt).scalars().all()
         if not task:
             return jsonify({"error": "task not found"}), 404
-        result = [{"id": t.id, "task_title" : t.task_title, "task_description" : t.task_description, "status_id" : t.status_id, "priority_id" : t.priority_id, "planned_start_date" : t.planned_start_date, "planned_end_date" : t.planned_end_date, "completed_on" : t.completed_on, "created_on" : t.created_on, "modified_on": t.modified_on } for t in task]
+        result = [{"id": t.id, "task_title" : t.task_title, "task_description" : t.task_description, "status_id" : t.status_id, "priority_id" : t.priority_id, "planned_start_date" : t.planned_start_date, "planned_end_date" : t.planned_end_date,"is_completed":  True if t.completed_on else False, "completed_on" : t.completed_on, "created_on" : t.created_on, "modified_on": t.modified_on } for t in task]
 
     return jsonify(result),200
     

@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flaskr.database import init_db, db_session,engine
+from flask_cors import CORS
 
 def create_app(test_config=None):
     #create and configure the app
@@ -9,6 +10,8 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE_URI=os.getenv("DATABASE_URI"),
     )
+
+    CORS(app, origins=['http://localhost:5173'])
 
     if test_config is None:
         # Load the instance config, if it exists, when not testing
